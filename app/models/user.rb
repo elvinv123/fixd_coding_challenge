@@ -11,6 +11,7 @@ class User < ApplicationRecord
   has_many :received_ratings, class_name: 'Rating', foreign_key: 'rated_user_id'
 
   after_initialize :ensure_session_token
+  after_commit :create_4_star_post, on: :update
 
   def self.find_by_credentials(user_name, password)
     user = User.find_by(user_name: user_name)
@@ -23,10 +24,6 @@ class User < ApplicationRecord
     self.password_digest = BCrypt::Password.create(password)
   end
 
-  def avg_rating
-    self.received_ratings.reduce(0.0) { |sum, rating| sum + rating.rating.to_f } / self.received_ratings.size
-  end
-
   def fetch_gh_events(page = 1, per_page = 25)
     url = "https://api.github.com/users/#{gh_username}/events?page=#{page}&per_page=#{per_page}"
     uri = URI(url)
@@ -34,7 +31,6 @@ class User < ApplicationRecord
     events = JSON.parse(response)
     events
   rescue StandardError => e
-    # Handle error
     puts "Error fetching GitHub events: #{e.message}"
     []
   end
@@ -50,6 +46,11 @@ class User < ApplicationRecord
   end
 
   private
+
+  def create_4_star_post
+    return unless avg_rating >= 4 && posts.where(title: "Passed 4 stars! 🎉").empty?
+    posts.create(title: "Passed 4 stars! 🎉", body: "🎉 I passed 4 stars yay 🎉")
+  end
 
   def ensure_session_token
     self.session_token ||= SecureRandom::urlsafe_base64

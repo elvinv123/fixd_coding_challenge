@@ -14,7 +14,7 @@ class Api::UsersController < ApplicationController
     if @user
       @posts = @user.posts.order(created_at: :desc).page(params[:page])
       @comments = @user.comments.order(created_at: :desc).page(params[:page])
-      @github_events = @user.fetch_gh_events
+      @github_events = @user.gh_username ? @user.fetch_gh_events : []
       render :show
     else
       render json: ["User not found"], status: 404
