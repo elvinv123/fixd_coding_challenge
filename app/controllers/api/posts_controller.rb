@@ -2,7 +2,6 @@ class Api::PostsController < ApplicationController
   before_action :ensure_logged_in
 
   def create
-    binding.pry
     @post = Post.new({title: params[:post][:title], body: params[:post][:body], author_id: current_user.id})
     if @post.save
       render :show

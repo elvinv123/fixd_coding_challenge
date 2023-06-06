@@ -9,5 +9,6 @@ Rails.application.routes.draw do
     resource :session, only: [:create, :destroy]
     resource :ratings, only: [:create]
     resource :posts, only: [:create, :destroy]
-   end
+    resource :comments, only: [:create, :destroy]
+  end
 end
