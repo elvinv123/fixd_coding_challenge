@@ -10,9 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_05_225556) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_06_005706) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "ratings", force: :cascade do |t|
+    t.integer "author_id"
+    t.integer "rated_user_id"
+    t.integer "rating"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "fname", null: false
@@ -27,4 +35,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_05_225556) do
     t.index ["user_name"], name: "index_users_on_user_name", unique: true
   end
 
+  add_foreign_key "ratings", "users", column: "author_id"
+  add_foreign_key "ratings", "users", column: "rated_user_id"
 end
