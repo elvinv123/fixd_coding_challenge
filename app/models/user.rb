@@ -27,15 +27,16 @@ class User < ApplicationRecord
     self.received_ratings.reduce(0.0) { |sum, rating| sum + rating.rating.to_f } / self.received_ratings.size
   end
 
-  def fetch_gh_events
-    begin
-      client = Octokit::Client.new
-      events = client.user_public_events(self.gh_username)
-      return events
-    rescue Octokit::Error => e
-      puts "Error fetching GitHub events: #{e.message}"
-      return []
-    end
+  def fetch_gh_events(page = 1, per_page = 25)
+    url = "https://api.github.com/users/#{gh_username}/events?page=#{page}&per_page=#{per_page}"
+    uri = URI(url)
+    response = Net::HTTP.get(uri)
+    events = JSON.parse(response)
+    events
+  rescue StandardError => e
+    # Handle error
+    puts "Error fetching GitHub events: #{e.message}"
+    []
   end
 
   def is_password?(password)

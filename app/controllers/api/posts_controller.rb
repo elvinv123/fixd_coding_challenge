@@ -2,7 +2,7 @@ class Api::PostsController < ApplicationController
   before_action :ensure_logged_in
 
   def show
-    @post = Post.find(params[:post][:id])
+    @post = Post.find(params[:id])
     if @post
       render :show
     else
