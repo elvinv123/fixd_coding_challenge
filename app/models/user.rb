@@ -5,6 +5,7 @@ class User < ApplicationRecord
   validates :password, length: {minimum: 6}, allow_nil: true
   validates :gh_username, uniqueness: true, allow_nil: true
 
+  has_many :posts, class_name: 'Post', foreign_key: 'author_id'
   has_many :given_ratings, class_name: 'Rating', foreign_key: 'author_id'
   has_many :received_ratings, class_name: 'Rating', foreign_key: 'rated_user_id'
 

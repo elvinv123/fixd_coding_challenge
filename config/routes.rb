@@ -8,5 +8,6 @@ Rails.application.routes.draw do
     resources :users, only: [:create, :show]
     resource :session, only: [:create, :destroy]
     resource :ratings, only: [:create]
+    resource :posts, only: [:create, :destroy]
    end
 end

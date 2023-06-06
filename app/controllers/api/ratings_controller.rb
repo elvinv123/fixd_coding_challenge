@@ -2,7 +2,7 @@ class Api::RatingsController < ApplicationController
   before_action :ensure_logged_in
 
   def create
-    @rating = Rating.new({rating: params[:rating], author_id: current_user.id, rated_user_id: params[:rated_user_id]})
+    @rating = Rating.new({rating: params[:rating][:rating], author_id: current_user.id, rated_user_id: params[:rating][:rated_user_id]})
     if @rating.save
       render :show
     else
@@ -12,6 +12,6 @@ class Api::RatingsController < ApplicationController
 
   private
   def rating_params
-    params.permit(:rating, :rated_user_id)
+    params.require(:rating).permit(:rating, :rated_user_id)
   end
 end
