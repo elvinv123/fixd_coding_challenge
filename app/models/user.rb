@@ -23,6 +23,21 @@ class User < ApplicationRecord
     self.password_digest = BCrypt::Password.create(password)
   end
 
+  def avg_rating
+    self.received_ratings.reduce(0.0) { |sum, rating| sum + rating.rating.to_f } / self.received_ratings.size
+  end
+
+  def fetch_gh_events
+    begin
+      client = Octokit::Client.new
+      events = client.user_public_events(self.gh_username)
+      return events
+    rescue Octokit::Error => e
+      puts "Error fetching GitHub events: #{e.message}"
+      return []
+    end
+  end
+
   def is_password?(password)
     BCrypt::Password.new(self.password_digest).is_password?(password)
   end
