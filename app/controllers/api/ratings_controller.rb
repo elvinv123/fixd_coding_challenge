@@ -2,7 +2,15 @@ class Api::RatingsController < ApplicationController
   before_action :ensure_logged_in
 
   def create
-    @rating = Rating.new({rating: params[:rating][:rating], author_id: current_user.id, rated_user_id: params[:rating][:rated_user_id]})
+    # Checks if a rating already exists by the author for a user. If exists update review if not create new review.
+    @rating = Rating.find_by(author_id: current_user.id, rated_user_id: params[:rating][:rated_user_id])
+
+    if @rating
+      @rating.update({rating: params[:rating][:rating], author_id: current_user.id, rated_user_id: params[:rating][:rated_user_id]})
+    else
+      @rating = Rating.new({rating: params[:rating][:rating], author_id: current_user.id, rated_user_id: params[:rating][:rated_user_id]})
+    end
+
     if @rating.save
       render :show
     else

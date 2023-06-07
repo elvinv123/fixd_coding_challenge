@@ -5,10 +5,10 @@ class User < ApplicationRecord
   validates :password, length: {minimum: 6}, allow_nil: true
   validates :gh_username, uniqueness: true, allow_nil: true
 
-  has_many :posts, class_name: 'Post', foreign_key: 'author_id'
-  has_many :comments, class_name: 'Comment', foreign_key: 'author_id'
-  has_many :given_ratings, class_name: 'Rating', foreign_key: 'author_id'
-  has_many :received_ratings, class_name: 'Rating', foreign_key: 'rated_user_id'
+  has_many :posts, class_name: 'Post', foreign_key: 'author_id', dependent: :destroy
+  has_many :comments, class_name: 'Comment', foreign_key: 'author_id', dependent: :destroy
+  has_many :given_ratings, class_name: 'Rating', foreign_key: 'author_id', dependent: :destroy
+  has_many :received_ratings, class_name: 'Rating', foreign_key: 'rated_user_id', dependent: :destroy
 
   after_initialize :ensure_session_token
   after_commit :create_4_star_post, on: :update
@@ -48,7 +48,7 @@ class User < ApplicationRecord
   private
 
   def create_4_star_post
-    return unless avg_rating >= 4 && posts.where(title: "Passed 4 stars! 🎉").empty?
+    return unless avg_rating && avg_rating >= 4 && posts.where(title: "Passed 4 stars! 🎉").empty?
     posts.create(title: "Passed 4 stars! 🎉", body: "🎉 I passed 4 stars yay 🎉")
   end
 

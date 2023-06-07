@@ -11,7 +11,17 @@ class Api::CommentsController < ApplicationController
     end
   end
 
+  # Deletes comment only if author of comment is authenticated
   def destroy
+    begin 
+    @comment = Comment.find(params[:id])
+      if @comment && current_user.id == @comment.author_id
+        @comment.destroy
+        render json: {}
+      end
+    rescue StandardError => e
+      render json: ["Unable to delete comment: #{e.message}"]
+    end
   end
 
   private

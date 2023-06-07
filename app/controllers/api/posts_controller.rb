@@ -19,14 +19,19 @@ class Api::PostsController < ApplicationController
     end
   end
 
+  # Deletes post only if author of post is authenticated
   def destroy
-    @post.destroy
-
-    respond_to do |format|
-      format.html { redirect_to posts_url, notice: "Post was successfully destroyed." }
-      format.json { head :no_content }
+    begin 
+    @post = Post.find(params[:id])
+      if @post && current_user.id == @post.author_id
+        @post.destroy
+        render json: {}
+      end
+    rescue StandardError => e
+      render json: ["Unable to delete post: #{e.message}"]
     end
   end
+
 
   private
     def post_params
