@@ -1,4 +1,5 @@
 class Rating < ApplicationRecord
+  validates :author_id, :rated_user_id, presence: true
   validates :rating, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 5, message: "must be between 1 and 5" }
   validates :rated_user_id, exclusion: { in: ->(rating) { [rating.author_id] } }
 

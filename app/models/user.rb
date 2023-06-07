@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+  require 'net/http'
   attr_reader :password
   validates :user_name, :session_token, presence: true, uniqueness: true
   validates :password_digest, :fname, :lname, presence: true
@@ -29,10 +30,10 @@ class User < ApplicationRecord
     uri = URI(url)
     response = Net::HTTP.get(uri)
     events = JSON.parse(response)
-    events
-  rescue StandardError => e
-    puts "Error fetching GitHub events: #{e.message}"
-    []
+    return events.kind_of?(Array) ? events : []
+    rescue StandardError => e
+      puts "Error fetching GitHub events: #{e.message}"
+      []
   end
 
   def is_password?(password)
