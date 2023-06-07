@@ -11,7 +11,16 @@ class Rating < ApplicationRecord
   private
   def update_user_avg_rating
     rated_user = User.find(self.rated_user.id)
-    new_avg = self.rated_user.received_ratings.reduce(0.0) { |sum, rating| sum + rating.rating.to_f } / rated_user.received_ratings.size
+    received_ratings = rated_user.received_ratings
+  
+    if received_ratings.empty?
+      new_avg = 0.0
+    else
+      total_ratings = received_ratings.length
+      total_sum = received_ratings.sum { |rating| rating.rating.to_f }
+      new_avg = total_sum / total_ratings
+    end
+  
     begin
       rated_user.avg_rating = new_avg
       rated_user.save!

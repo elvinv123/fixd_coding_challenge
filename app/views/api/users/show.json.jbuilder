@@ -8,11 +8,9 @@ json.comments @comments do |comment|
   json.partial! '/api/comments/comment', comment: comment
 end
 
-if @github_events.length > 0
-  json.github_events @github_events do |event|
-    json.id event["id"]
-    json.type event["type"]
-    json.repo event["repo"]["name"]
-    json.payload event["payload"].to_h
-  end
+json.github_events @github_events do |event|
+  json.id event["id"]
+  json.type event["type"]
+  json.repo event["repo"]["name"]
+  json.payload event["payload"].to_h
 end
